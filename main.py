@@ -23,7 +23,7 @@ def test(**kwargs):
     train_data = DogCat(opt.test_data_root,test=True)
     test_dataloader = DataLoader(train_data,batch_size=opt.batch_size,shuffle=False,num_workers=opt.num_workers)
     results = []
-    for ii,(data,path) in tqdm(enumerate(test_dataloader)):
+    for ii,(data,path) in enumerate(test_dataloader):
         input = data.to(opt.device)
         score = model(input)
         probability = t.nn.functional.softmax(score,dim=1)[:,0].detach().tolist()
@@ -70,6 +70,7 @@ def train(**kwargs):
     confusion_matrix = meter.ConfusionMeter(2)
     previous_loss = 1e10
     loss_list=[]
+    accuary=[]
     # train
     for epoch in range(opt.max_epoch):
         
@@ -98,10 +99,11 @@ def train(**kwargs):
             if (ii + 1)%opt.print_freq == 0:
                 clear_output()
                 loss_list.append(loss_meter.value()[0])
-                figure=plt.figure()
-                ax=figure.add_subplot(111)
-                ax.plot(loss_list)
+                figure1=plt.figure(1)
+                ax1=figure1.add_subplot(111)
+                ax1.plot(loss_list)
                 plt.show()
+                print(loss_meter.value()[0])
                 
                 #vis.plot('loss', )
                 
@@ -117,11 +119,17 @@ def train(**kwargs):
 
         # validate and visualize
         val_cm,val_accuracy = val(model,val_dataloader)
-
+        accuary.append(val_accuracy)
+        figure2=plt.figure(2)
+        ax2=figure2.add_subplot(111)
+        ax2.plot(accuary)
+        plt.show()
+        
+        '''
         vis.plot('val_accuracy',val_accuracy)
         vis.log("epoch:{epoch},lr:{lr},loss:{loss},train_cm:{train_cm},val_cm:{val_cm}".format(
                     epoch = epoch,loss = loss_meter.value()[0],val_cm = str(val_cm.value()),train_cm=str(confusion_matrix.value()),lr=lr))
-        
+        '''
         # update learning rate
         if loss_meter.value()[0] > previous_loss:          
             lr = lr * opt.lr_decay
@@ -139,7 +147,7 @@ def val(model,dataloader):
     """
     model.eval()
     confusion_matrix = meter.ConfusionMeter(2)
-    for ii, (val_input, label) in tqdm(enumerate(dataloader)):
+    for ii, (val_input, label) in enumerate(dataloader):
         val_input = val_input.to(opt.device)
         score = model(val_input)
         confusion_matrix.add(score.detach().squeeze(), label.type(t.LongTensor))
