@@ -174,5 +174,8 @@ def help():
     from inspect import getsource
     source = (getsource(opt.__class__))
     print(source)
+if __name__=='__main__':
+    import fire
+    fire.Fire()
 
     
