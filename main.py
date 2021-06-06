@@ -21,7 +21,7 @@ def test(**kwargs):
 
     # data
     train_data = DogCat(opt.test_data_root,test=True)
-    test_dataloader = DataLoader(train_data,batch_size=opt.batch_size,shuffle=False,num_workers=opt.num_workers)
+    test_dataloader = DataLoader(train_data,batch_size=opt.batch_size,shuffle=True,num_workers=opt.num_workers)
     results = []
     for ii,(data,path) in enumerate(test_dataloader):
         input = data.to(opt.device)
