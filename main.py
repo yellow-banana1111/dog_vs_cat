@@ -76,7 +76,7 @@ def train(**kwargs):
         
         loss_meter.reset()
         confusion_matrix.reset()
-        name=0
+        #name=0
 
         for ii,(data,label) in enumerate(train_dataloader):
             
@@ -120,7 +120,7 @@ def train(**kwargs):
                 '''
 
 
-        model.save(name)
+        model.save()
 
         # validate and visualize
         val_cm,val_accuracy = val(model,val_dataloader)
