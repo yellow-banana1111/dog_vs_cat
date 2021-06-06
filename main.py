@@ -76,6 +76,7 @@ def train(**kwargs):
         
         loss_meter.reset()
         confusion_matrix.reset()
+        name=0
 
         for ii,(data,label) in enumerate(train_dataloader):
             
@@ -97,12 +98,16 @@ def train(**kwargs):
             confusion_matrix.add(score.detach(), target.detach()) 
 
             if (ii + 1)%opt.print_freq == 0:
+                name+=1
+                '''
                 clear_output()
-                loss_list.append(loss_meter.value()[0])
+                
                 figure1=plt.figure(1)
                 ax1=figure1.add_subplot(111)
                 ax1.plot(loss_list)
                 plt.show()
+                '''
+                loss_list.append(loss_meter.value()[0])
                 print(loss_meter.value()[0])
                 
                 #vis.plot('loss', )
@@ -115,15 +120,26 @@ def train(**kwargs):
                 '''
 
 
-        model.save()
+        model.save(name)
 
         # validate and visualize
         val_cm,val_accuracy = val(model,val_dataloader)
+        print("accuracy: %s" %val_accuracy)
         accuary.append(val_accuracy)
+        
+        figure=plt.figure(1)
+        ax1=figure.add_subplot(211)
+        ax2=figure.add_subplot(212)
+        ax1.plot(loss_list)
+        ax2.plot(accuary)
+        plt.show()
+        
+        '''
         figure2=plt.figure(2)
         ax2=figure2.add_subplot(111)
         ax2.plot(accuary)
         plt.show()
+        '''
         
         '''
         vis.plot('val_accuracy',val_accuracy)
@@ -131,14 +147,15 @@ def train(**kwargs):
                     epoch = epoch,loss = loss_meter.value()[0],val_cm = str(val_cm.value()),train_cm=str(confusion_matrix.value()),lr=lr))
         '''
         # update learning rate
+        '''
         if loss_meter.value()[0] > previous_loss:          
             lr = lr * opt.lr_decay
             # 第二种降低学习率的方法:不会有moment等信息的丢失
             for param_group in optimizer.param_groups:
                 param_group['lr'] = lr
-        
-
         previous_loss = loss_meter.value()[0]
+        '''
+    
 
 @t.no_grad()
 def val(model,dataloader):
