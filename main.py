@@ -98,7 +98,7 @@ def train(**kwargs):
             confusion_matrix.add(score.detach(), target.detach()) 
 
             if (ii + 1)%opt.print_freq == 0:
-                name+=1
+                #name+=1
                 '''
                 clear_output()
                 
