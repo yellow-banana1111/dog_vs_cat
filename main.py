@@ -7,7 +7,7 @@ from data.dataset import DogCat
 from torch.utils.data import DataLoader
 from torchnet import meter
 import matplotlib.pyplot as plt
-
+from easydl import clear_output
 
 @t.no_grad() # pytorch>=0.5
 def test(**kwargs):
