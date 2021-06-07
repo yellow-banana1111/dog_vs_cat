@@ -88,6 +88,7 @@ def train(**kwargs):
             optimizer.zero_grad()
             score = model(input)
             loss = criterion(score,target)
+            
             loss.backward()
             optimizer.step()
             
@@ -95,7 +96,7 @@ def train(**kwargs):
             # meters update and visualize
             loss_meter.add(loss.item())
             # detach 一下更安全保险
-            confusion_matrix.add(score.detach(), target.detach()) 
+            confusion_matrix.add(score, target) 
 
             if (ii + 1)%opt.print_freq == 0:
                 #name+=1
@@ -127,12 +128,13 @@ def train(**kwargs):
         print("accuracy: %s" %val_accuracy)
         accuary.append(val_accuracy)
         
-        figure=plt.figure(1)
-        ax1=figure.add_subplot(211)
-        ax2=figure.add_subplot(212)
-        ax1.plot(loss_list)
-        ax2.plot(accuary)
-        plt.show()
+    figure=plt.figure(1)
+    ax1=figure.add_subplot(211)
+    ax2=figure.add_subplot(212)
+    ax1.plot(loss_list)
+    ax2.plot(accuary)
+    plt.show()
+    print(type(loss))
         
         '''
         figure2=plt.figure(2)
